@@ -1,0 +1,6 @@
+# Grafana Plugin Server
+
+This project uses a backend (`pkg`) and frontend (`src`) to allow storing and requesting of Grafana
+plugins.
+
+Use the `Makefile` to start.
