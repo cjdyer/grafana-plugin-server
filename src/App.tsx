@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { RemotePlugin } from "./types";
+import { RemotePluginCard } from "./PluginCard";
 
 export default function App() {
     const [plugins, setPlugins] = useState<RemotePlugin[]>([]);
@@ -34,10 +35,7 @@ export default function App() {
             ) : (
                 <ul>
                     {plugins.map((p) => (
-                        <li key={p.id}>
-                            <strong>{p.id}</strong> ({p.name})<br />
-                            Downloads: {p.downloads}
-                        </li>
+                        <RemotePluginCard plugin={p} key={p.id} />
                     ))}
                 </ul>
             )}
