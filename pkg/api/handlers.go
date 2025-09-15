@@ -29,6 +29,18 @@ func ProxyGrafanaAPI(c *gin.Context) {
 	c.Writer.Write(body)
 }
 
+func GetPlugins(c *gin.Context) {
+	pluginsWithVersions, err := plugins.ListPluginsWithVersions()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"items": pluginsWithVersions,
+	})
+}
+
 func UploadPlugin(c *gin.Context) {
 	var payload struct {
 		ID      string `json:"id"`
