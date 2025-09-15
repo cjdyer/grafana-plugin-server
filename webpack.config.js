@@ -35,6 +35,5 @@ module.exports = {
             },
         ],
         hot: true,
-        open: true, // auto open browser
     },
 };
