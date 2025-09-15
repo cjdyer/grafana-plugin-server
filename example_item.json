@@ -1,0 +1,97 @@
+{
+    "status": "active",
+    "id": 74,
+    "typeId": 1,
+    "typeName": "Application",
+    "typeCode": "app",
+    "slug": "alexanderzobnin-zabbix-app",
+    "name": "Zabbix",
+    "description": "Zabbix plugin for Grafana",
+    "keywords": ["zabbix", "servers and vms"],
+    "version": "5.2.1",
+    "versionStatus": "active",
+    "versionSignatureType": "grafana",
+    "versionSignedByOrg": "grafana",
+    "versionSignedByOrgName": "Grafana Labs",
+    "userId": 0,
+    "orgId": 13056,
+    "orgName": "Alexander Zobnin",
+    "orgSlug": "alexanderzobnin",
+    "orgUrl": "https://github.com/alexanderzobnin",
+    "url": "https://github.com/grafana/grafana-zabbix",
+    "createdAt": "2016-04-06T20:23:41.000Z",
+    "updatedAt": "2025-08-07T14:50:18.000Z",
+    "downloads": 158001306,
+    "verified": false,
+    "featured": 180,
+    "internal": false,
+    "downloadSlug": "alexanderzobnin-zabbix-app",
+    "popularity": 0.2733,
+    "signatureType": "grafana",
+    "packages": {
+        "darwin-amd64": {
+            "md5": "4717f8145ff7d95fb33767df3cebaf9b",
+            "sha256": "b62dcfa2eb3aba29512df9c5f458ba028b610b73595f21e252361b0c3d5d96f6",
+            "packageName": "darwin-amd64",
+            "downloadUrl": "/api/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download?os=darwin&arch=amd64"
+        },
+        "darwin-arm64": {
+            "md5": "d357cc6dc994777d76fe94cd76a87e7c",
+            "sha256": "8dea9134cc0b02f473f66958aca1e86be6413b50bdca6aff39e4888ad780993a",
+            "packageName": "darwin-arm64",
+            "downloadUrl": "/api/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download?os=darwin&arch=arm64"
+        },
+        "linux-amd64": {
+            "md5": "085315f7cb68ac00d7dbfae722a430c1",
+            "sha256": "72e8e652d2ff90c781ce6423ca282fd86af28abfe77184a703d78abdfe7e2dd2",
+            "packageName": "linux-amd64",
+            "downloadUrl": "/api/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download?os=linux&arch=amd64"
+        },
+        "linux-arm": {
+            "md5": "6fff6e474b578fd550151306669a6697",
+            "sha256": "06f6373616f7df6fedb2054f53ba86dcfdcc0d417790502bf099abd6026074b4",
+            "packageName": "linux-arm",
+            "downloadUrl": "/api/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download?os=linux&arch=arm"
+        },
+        "linux-arm64": {
+            "md5": "108d3ca8672bf324a0e9ebc93ce36744",
+            "sha256": "d8957ba34a80e88acc8cd2fcea185b1351393f1d68b6d5e2d18bad695e582433",
+            "packageName": "linux-arm64",
+            "downloadUrl": "/api/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download?os=linux&arch=arm64"
+        },
+        "windows-amd64": {
+            "md5": "7ef462325284ed28d9342d82765d50a0",
+            "sha256": "886ad0e4ca915eab0b2760ad81aff6afe479a2f73f0b1f459c758b2e3d794167",
+            "packageName": "windows-amd64",
+            "downloadUrl": "/api/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download?os=windows&arch=amd64"
+        },
+        "any": {
+            "md5": "092dcf0f8374cfe87f93dc4dcbcde4b8",
+            "sha256": "c54888065c547869e0136a9cab498b36c36344417a0df247ba02209df6b8409d",
+            "packageName": "any",
+            "downloadUrl": "/api/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download"
+        }
+    },
+    "links": [
+        {
+            "rel": "self",
+            "href": "/plugins/alexanderzobnin-zabbix-app"
+        },
+        {
+            "rel": "versions",
+            "href": "/plugins/alexanderzobnin-zabbix-app/versions"
+        },
+        {
+            "rel": "latest",
+            "href": "/plugins/alexanderzobnin-zabbix-app/versions/5.2.1"
+        },
+        {
+            "rel": "download",
+            "href": "/plugins/alexanderzobnin-zabbix-app/versions/5.2.1/download"
+        }
+    ],
+    "angularDetected": false,
+    "raiseAnIssueUrl": "https://github.com/grafana/grafana-zabbix/issues/new",
+    "scopes": ["universal"],
+    "provenanceAttestation": null
+}
