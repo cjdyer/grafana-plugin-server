@@ -1,10 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { RemotePlugin } from "./types";
 import { PluginGrid } from "./PluginGrid";
+import { css } from "@emotion/css";
+
+const getStyles = () => ({
+    appContainer: css({
+        maxWidth: 1200,
+        margin: "0 auto",
+        padding: "32px 16px",
+        fontFamily: "Arial, sans-serif",
+    }),
+    header: css({
+        textAlign: "center",
+        marginBottom: 32,
+        h1: {
+            fontSize: "2rem",
+            margin: 0,
+        },
+        p: {
+            marginTop: 8,
+            color: "#555",
+        },
+    }),
+    loading: css({
+        textAlign: "center",
+        padding: "64px 0",
+        fontSize: "1.2rem",
+    }),
+});
 
 export default function App() {
     const [plugins, setPlugins] = useState<RemotePlugin[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const styles = getStyles();
 
     useEffect(() => {
         async function fetchPlugins() {
@@ -24,12 +53,17 @@ export default function App() {
     }, []);
 
     if (loading) {
-        return <div>Loading plugins…</div>;
+        return <div className={styles.loading}>Loading plugins…</div>;
     }
 
     return (
-        <div>
-            <h1>Private Grafana Plugin Store</h1>
+        <div className={styles.appContainer}>
+            <header className={styles.header}>
+                <h1>Private Grafana Plugin Store</h1>
+                <p>
+                    Browse and manage your organization's custom Grafana plugins
+                </p>
+            </header>
             <PluginGrid plugins={plugins} />
         </div>
     );
