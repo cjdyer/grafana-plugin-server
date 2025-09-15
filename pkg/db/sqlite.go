@@ -2,9 +2,13 @@ package db
 
 import (
 	"database/sql"
+	"embed"
 
 	_ "github.com/mattn/go-sqlite3"
 )
+
+//go:embed migrations/*.sql
+var migrationFiles embed.FS
 
 var DB *sql.DB
 
@@ -23,5 +27,10 @@ func Init() error {
 }
 
 func runMigrations() error {
-	return nil
+	schema, err := migrationFiles.ReadFile("migrations/schema.sql")
+	if err != nil {
+		return err
+	}
+	_, err = DB.Exec(string(schema))
+	return err
 }

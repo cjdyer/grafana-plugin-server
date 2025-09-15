@@ -12,5 +12,5 @@ func RegisterRoutes(r *gin.Engine) {
 	r.GET("/repo.json", GetRepoJSON)
 	r.GET("/api/plugins", ProxyGrafanaAPI)
     
-	r.POST("/api/plugins/upload", UploadPlugin)
+	r.POST("/api/plugins", UploadPlugin)
 }

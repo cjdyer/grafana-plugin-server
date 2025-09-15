@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/cjdyer/grafana-plugin-server/pkg/db"
+	"github.com/cjdyer/grafana-plugin-server/pkg/plugins"
 	"github.com/gin-gonic/gin"
 )
 
