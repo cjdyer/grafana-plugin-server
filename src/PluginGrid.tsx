@@ -32,10 +32,8 @@ export function PluginGrid({ plugins }: PluginGridProps) {
 
     const styles = getStyles();
 
-    console.log(plugins);
-
     const filteredPlugins = plugins.filter((p) =>
-        p.id.toLowerCase().includes(query.toLowerCase())
+        p.name.toLowerCase().includes(query.toLowerCase())
     );
 
     return (

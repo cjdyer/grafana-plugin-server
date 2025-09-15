@@ -1,10 +1,19 @@
 import { PluginType } from "@grafana/data";
 
 export type RemotePlugin = {
-    id: string;
-    url: string;
-    name: string;
+    id: number;
+    slug: string;
+    typeId: number;
+    typeName: string;
     typeCode: PluginType;
+    name: string;
+    url: string;
+    description: string;
+    orgName: string;
+    orgUrl: string;
+    keywords: string[];
+    version: string;
+    updatedAt: string;
 };
 
 // type RemotePlugin = {

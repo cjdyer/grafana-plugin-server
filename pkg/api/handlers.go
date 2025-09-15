@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/cjdyer/grafana-plugin-server/pkg/db"
 	"github.com/cjdyer/grafana-plugin-server/pkg/plugins"
@@ -43,10 +45,18 @@ func GetPlugins(c *gin.Context) {
 
 func UploadPlugin(c *gin.Context) {
 	var payload struct {
-		ID   string `json:"id"`
 		Type string `json:"type"`
-		URL  string `json:"url"`
 		Name string `json:"name"`
+		ID   string `json:"id"`
+		Info struct {
+			Description string `json:"description"`
+			Author      struct {
+				Name string `json:"name"`
+				URL  string `json:"url"`
+			} `json:"author"`
+			Keywords []string `json:"keywords"`
+			Version  string   `json:"version"`
+		} `json:"info"`
 	}
 
 	if err := c.BindJSON(&payload); err != nil {
@@ -54,7 +64,28 @@ func UploadPlugin(c *gin.Context) {
 		return
 	}
 
-	p := db.Plugin{ID: payload.ID, Type: db.Type(payload.Type), Name: payload.Name, URL: payload.URL}
+	typeCode, err := GetTypeData(payload.Type)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid plugin type"})
+		return
+	}
+
+	t := time.Now().UTC()
+	p := db.Plugin{
+		Slug:        payload.ID,
+		TypeId:      typeCode.Id,
+		TypeName:    typeCode.Name,
+		TypeCode:    typeCode.Code,
+		Name:        payload.Name,
+		URL:         payload.Info.Author.URL,
+		Description: payload.Info.Description,
+		OrgName:     payload.Info.Author.Name,
+		OrgUrl:      payload.Info.Author.URL,
+		Keywords:    payload.Info.Keywords,
+		Version:     payload.Info.Version,
+		UpdatedAt:   t.Format(time.RFC3339),
+	}
 
 	if err := plugins.AddPlugin(p); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -65,4 +96,23 @@ func UploadPlugin(c *gin.Context) {
 		"message": "Plugin uploaded successfully",
 		"plugin":  p,
 	})
+}
+
+type TypeMeta struct {
+	Id   uint8
+	Name string
+	Code db.TypeCode
+}
+
+func GetTypeData(typeString string) (*TypeMeta, error) {
+	switch typeString {
+	case string(db.TypeCodeApp):
+		return &TypeMeta{Id: 1, Name: "Application", Code: db.TypeCodeApp}, nil
+	case string(db.TypeCodeDataSource):
+		return &TypeMeta{Id: 2, Name: "Data Source", Code: db.TypeCodeDataSource}, nil
+	case string(db.TypeCodePanel):
+		return &TypeMeta{Id: 3, Name: "Panel", Code: db.TypeCodePanel}, nil
+	}
+
+	return nil, fmt.Errorf("datasource type cannot be empty")
 }
