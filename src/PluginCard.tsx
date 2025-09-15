@@ -72,7 +72,6 @@ export const RemotePluginCard: React.FC<RemotePluginCardProps> = ({
         url,
     } = {
         ...plugin,
-        name: plugin.id,
         description: "",
         orgName: "",
         orgUrl: "",
@@ -80,7 +79,6 @@ export const RemotePluginCard: React.FC<RemotePluginCardProps> = ({
         version: "",
         verified: "",
         keywords: [],
-        url: "",
     };
 
     return (

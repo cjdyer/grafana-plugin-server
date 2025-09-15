@@ -2,16 +2,10 @@ import { PluginType } from "@grafana/data";
 
 export type RemotePlugin = {
     id: string;
-    typeCode: PluginType;
-    versions: Version[];
-};
-
-interface Version {
-    id: number;
-    plugin_id: string;
-    version: string;
     url: string;
-}
+    name: string;
+    typeCode: PluginType;
+};
 
 // type RemotePlugin = {
 //     createdAt: string;

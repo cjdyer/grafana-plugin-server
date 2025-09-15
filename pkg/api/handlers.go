@@ -30,23 +30,23 @@ func ProxyGrafanaAPI(c *gin.Context) {
 }
 
 func GetPlugins(c *gin.Context) {
-	pluginsWithVersions, err := plugins.ListPluginsWithVersions()
+	plugins, err := plugins.ListPlugins()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"items": pluginsWithVersions,
+		"items": plugins,
 	})
 }
 
 func UploadPlugin(c *gin.Context) {
 	var payload struct {
-		ID      string `json:"id"`
-		Type    string `json:"type"`
-		Version string `json:"version"`
-		URL     string `json:"url"`
+		ID   string `json:"id"`
+		Type string `json:"type"`
+		URL  string `json:"url"`
+		Name string `json:"name"`
 	}
 
 	if err := c.BindJSON(&payload); err != nil {
@@ -54,10 +54,9 @@ func UploadPlugin(c *gin.Context) {
 		return
 	}
 
-	p := db.Plugin{ID: payload.ID, Type: payload.Type}
-	v := db.Version{PluginID: payload.ID, Version: payload.Version, URL: payload.URL}
+	p := db.Plugin{ID: payload.ID, Type: db.Type(payload.Type), Name: payload.Name, URL: payload.URL}
 
-	if err := plugins.AddPluginWithVersion(p, v); err != nil {
+	if err := plugins.AddPlugin(p); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -65,6 +64,5 @@ func UploadPlugin(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Plugin uploaded successfully",
 		"plugin":  p,
-		"version": v,
 	})
 }

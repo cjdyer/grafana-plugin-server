@@ -1,12 +1,6 @@
 CREATE TABLE IF NOT EXISTS plugins (
     id TEXT PRIMARY KEY,
-    type TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS versions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    plugin_id TEXT NOT NULL,
-    version TEXT NOT NULL,
-    url TEXT NOT NULL,
-    FOREIGN KEY (plugin_id) REFERENCES plugins (id)
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL
 );

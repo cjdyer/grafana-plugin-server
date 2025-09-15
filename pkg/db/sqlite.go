@@ -1,20 +1,20 @@
 package db
 
 import (
-	"database/sql"
 	"embed"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 //go:embed migrations/*.sql
 var migrationFiles embed.FS
 
-var DB *sql.DB
+var DB *sqlx.DB
 
 func Init() error {
 	var err error
-	DB, err = sql.Open("sqlite3", "./plugins.db")
+	DB, err = sqlx.Open("sqlite3", "./plugins.db")
 	if err != nil {
 		return err
 	}
