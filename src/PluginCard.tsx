@@ -70,7 +70,18 @@ export const RemotePluginCard: React.FC<RemotePluginCardProps> = ({
         verified,
         keywords,
         url,
-    } = plugin;
+    } = {
+        ...plugin,
+        name: plugin.id,
+        description: "",
+        orgName: "",
+        orgUrl: "",
+        downloads: "",
+        version: "",
+        verified: "",
+        keywords: [],
+        url: "",
+    };
 
     return (
         <Card className={styles.card} variant="outlined">
