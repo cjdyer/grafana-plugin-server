@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { RemotePlugin } from "./types";
 import { RemotePluginCard } from "./PluginCard";
+import { css } from "@emotion/css";
+
+const getStyles = () => ({
+    grid: css({
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+        gap: 16,
+        marginTop: 24,
+    }),
+});
 
 export default function App() {
     const [plugins, setPlugins] = useState<RemotePlugin[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const styles = getStyles();
 
     useEffect(() => {
         async function fetchPlugins() {
@@ -33,11 +45,11 @@ export default function App() {
             {plugins.length === 0 ? (
                 <p>No plugins found</p>
             ) : (
-                <ul>
+                <div className={styles.grid}>
                     {plugins.map((p) => (
                         <RemotePluginCard plugin={p} key={p.id} />
                     ))}
-                </ul>
+                </div>
             )}
         </div>
     );
