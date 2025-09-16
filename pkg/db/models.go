@@ -10,6 +10,11 @@ const (
 	TypeCodeSecretsManager TypeCode = "secretsmanager"
 )
 
+type Link struct {
+	Rel  string `json:"rel"`
+	Href string `json:"href"`
+}
+
 type Plugin struct {
 	ID           uint16   `db:"id" json:"id"`
 	Slug         string   `db:"slug" json:"slug"`
@@ -25,4 +30,5 @@ type Plugin struct {
 	KeywordsJSON string   `db:"keywords" json:"-"`
 	Version      string   `db:"version" json:"version"`
 	UpdatedAt    string   `db:"updated_at" json:"updatedAt"`
+	Links        []Link   `db:"-" json:"links"`
 }

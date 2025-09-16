@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/cjdyer/grafana-plugin-server/pkg/db"
 )
@@ -56,7 +57,21 @@ func ListPlugins() ([]db.Plugin, error) {
 		} else {
 			plugins[i].Keywords = []string{}
 		}
+
+		plugins[i].Links = buildPluginLinks(plugins[i].Slug, plugins[i].Version)
 	}
 
 	return plugins, nil
+}
+
+func buildPluginLinks(slug string, version string) []db.Link {
+	base := fmt.Sprintf("/api/plugins/%s", slug)
+	links := []db.Link{
+		{Rel: "self", Href: base},
+		{Rel: "versions", Href: base + "/versions"},
+		{Rel: "latest", Href: fmt.Sprintf("%s/versions/%s", base, version)},
+		{Rel: "download", Href: fmt.Sprintf("%s/versions/%s/download", base, version)},
+	}
+
+	return links
 }

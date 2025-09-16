@@ -98,6 +98,28 @@ func UploadPlugin(c *gin.Context) {
 	})
 }
 
+func GetPluginBySlug(c *gin.Context) {
+	slug := c.Param("slug")
+	c.JSON(200, gin.H{"slug": slug})
+}
+
+func GetVersions(c *gin.Context) {
+	slug := c.Param("slug")
+	c.JSON(200, gin.H{"slug": slug, "versions": []string{}})
+}
+
+func GetVersion(c *gin.Context) {
+	slug := c.Param("slug")
+	ver := c.Param("ver")
+	c.JSON(200, gin.H{"slug": slug, "version": ver})
+}
+
+func DownloadVersion(c *gin.Context) {
+	slug := c.Param("slug")
+	ver := c.Param("ver")
+	c.JSON(200, gin.H{"message": "Download not implemented", "slug": slug, "version": ver})
+}
+
 type TypeMeta struct {
 	Id   uint8
 	Name string

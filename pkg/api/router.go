@@ -11,6 +11,11 @@ func RegisterRoutes(r *gin.Engine) {
 
 	r.GET("/repo.json", GetRepoJSON)
 
+	// Plugin APIs
 	r.GET("/api/plugins", GetPlugins)
 	r.POST("/api/plugins", UploadPlugin)
+	r.GET("/api/plugins/:slug", GetPluginBySlug)
+	r.GET("/api/plugins/:slug/versions", GetVersions)
+	r.GET("/api/plugins/:slug/versions/:ver", GetVersion)
+	r.GET("/api/plugins/:slug/versions/:ver/download", DownloadVersion)
 }
