@@ -105,7 +105,7 @@ export const RemotePluginCard: React.FC<RemotePluginCardProps> = ({
                     {description}
                 </Typography>
 
-                {keywords.length > 0 && (
+                {keywords && keywords.length > 0 && (
                     <Box sx={{ mt: 1, mb: 1 }}>
                         {keywords.map((kw) => (
                             <Chip

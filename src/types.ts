@@ -11,7 +11,7 @@ export type RemotePlugin = {
     description: string;
     orgName: string;
     orgUrl: string;
-    keywords: string[];
+    keywords?: string[];
     version: string;
     updatedAt: string;
 };
