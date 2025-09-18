@@ -1,0 +1,6 @@
+services:
+  grafana-plugin-server:
+    build: .
+    image: grafana-plugin-server:latest
+    ports:
+      - 3838:3838

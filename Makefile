@@ -1,32 +1,28 @@
-.PHONY: all
-all: build backend backend-build backend-clean frontend frontend-build frontend-clean build clean run
+.PHONY: all clean build run docker-build docker-run
 
-build: backend-build frontend-build
-clean: backend-clean frontend-clean
-run:
-	@echo ">>> Starting backend and frontend (dev mode)..."
-	@$(MAKE) -j2 backend frontend
+all: build
 
-backend:
-	@echo ">>> Running Go backend..."
-	go run pkg/main.go
+build: build-frontend build-backend
 
-backend-build:
-	@echo ">>> Building Go backend..."
-	go build -o build/server pkg/main.go
-
-backend-clean:
-	@echo ">>> Cleaning backend build..."
-	rm -f build
-
-frontend:
-	@echo ">>> Starting frontend dev server..."
-	npm run dev
-
-frontend-build:
-	@echo ">>> Building frontend bundle..."
+build-frontend:
+	@echo ">>> Building frontend..."
 	npm run build
 
-frontend-clean:
-	@echo ">>> Cleaning frontend dist..."
-	npm run clean
+build-backend:
+	@echo ">>> Building Go server..."
+	go build -o build/server pkg/main.go
+
+clean:
+	rm -rf build dist node_modules
+
+run: build
+	@echo ">>> Running server on :3838..."
+	./build/server
+
+build-docker:
+	@echo ">>> Building Docker image..."
+	docker build -t grafana-plugin-server:latest .
+
+run-docker:
+	@echo ">>> Running Docker container..."
+	docker compose up --build
