@@ -26,15 +26,21 @@ export function Upload({}: Props) {
         if (!e.target.files || e.target.files.length === 0) return;
 
         const file = e.target.files[0];
-        const text = await file.text();
+
+        if (!file.name.endsWith(".tar") && !file.name.endsWith(".tar.gz")) {
+            alert("Please upload a .tar or .tar.gz plugin file");
+            e.target.value = "";
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("plugin", file);
 
         try {
-            const json = JSON.parse(text);
             setUploading(true);
             const res = await fetch("/api/plugins", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(json),
+                body: formData,
             });
 
             if (!res.ok) {
@@ -45,7 +51,7 @@ export function Upload({}: Props) {
                 // fetchPlugins();
             }
         } catch (err) {
-            alert("Invalid plugin.json file");
+            alert("Upload failed: " + (err as Error).message);
         } finally {
             setUploading(false);
             e.target.value = "";
@@ -55,11 +61,12 @@ export function Upload({}: Props) {
     return (
         <div className={styles.uploadBox}>
             <p>
-                Upload a <code>plugin.json</code> file to register a new plugin
+                Upload a Grafana plugin as <code>.tar</code> or{" "}
+                <code>.tar.gz</code>
             </p>
             <input
                 type="file"
-                accept="application/json"
+                accept=".tar,.tar.gz"
                 onChange={handleUpload}
                 disabled={uploading}
             />

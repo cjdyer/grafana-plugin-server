@@ -31,4 +31,20 @@ type Plugin struct {
 	Version      string   `db:"version" json:"version"`
 	UpdatedAt    string   `db:"updated_at" json:"updatedAt"`
 	Links        []Link   `db:"-" json:"links"`
+	FilePath     string   `db:"file_path" json:"filePath"`
+}
+
+type Payload struct {
+	Type string `json:"type"`
+	Name string `json:"name"`
+	ID   string `json:"id"`
+	Info struct {
+		Description string `json:"description"`
+		Author      struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"author"`
+		Keywords []string `json:"keywords"`
+		Version  string   `json:"version"`
+	} `json:"info"`
 }

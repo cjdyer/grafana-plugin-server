@@ -1,9 +1,15 @@
 package api
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/cjdyer/grafana-plugin-server/pkg/db"
@@ -38,28 +44,30 @@ func GetPlugins(c *gin.Context) {
 }
 
 func UploadPlugin(c *gin.Context) {
-	var payload struct {
-		Type string `json:"type"`
-		Name string `json:"name"`
-		ID   string `json:"id"`
-		Info struct {
-			Description string `json:"description"`
-			Author      struct {
-				Name string `json:"name"`
-				URL  string `json:"url"`
-			} `json:"author"`
-			Keywords []string `json:"keywords"`
-			Version  string   `json:"version"`
-		} `json:"info"`
-	}
-
-	if err := c.BindJSON(&payload); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+	file, err := c.FormFile("plugin")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Plugin file is required"})
 		return
 	}
 
-	typeCode, err := GetTypeData(payload.Type)
+	if !strings.HasSuffix(file.Filename, ".tar") && !strings.HasSuffix(file.Filename, ".tar.gz") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only .tar or .tar.gz files are allowed"})
+		return
+	}
 
+	tempPath := "/tmp/" + file.Filename
+	if err := c.SaveUploadedFile(file, tempPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file"})
+		return
+	}
+
+	metadata, err := ExtractPluginMetadata(tempPath)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid plugin package: " + err.Error()})
+		return
+	}
+
+	typeCode, err := GetTypeData(metadata.Type)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid plugin type"})
 		return
@@ -67,24 +75,27 @@ func UploadPlugin(c *gin.Context) {
 
 	t := time.Now().UTC()
 	p := db.Plugin{
-		Slug:        payload.ID,
+		Slug:        metadata.ID,
 		TypeId:      typeCode.Id,
 		TypeName:    typeCode.Name,
 		TypeCode:    typeCode.Code,
-		Name:        payload.Name,
-		URL:         payload.Info.Author.URL,
-		Description: payload.Info.Description,
-		OrgName:     payload.Info.Author.Name,
-		OrgUrl:      payload.Info.Author.URL,
-		Keywords:    payload.Info.Keywords,
-		Version:     payload.Info.Version,
+		Name:        metadata.Name,
+		URL:         metadata.Info.Author.URL,
+		Description: metadata.Info.Description,
+		OrgName:     metadata.Info.Author.Name,
+		OrgUrl:      metadata.Info.Author.URL,
+		Keywords:    metadata.Info.Keywords,
+		Version:     metadata.Info.Version,
 		UpdatedAt:   t.Format(time.RFC3339),
+		FilePath:    "/plugins/" + file.Filename,
 	}
 
 	if err := plugins.AddPlugin(p); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	os.Rename(tempPath, "./static/plugins/"+file.Filename)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Plugin uploaded successfully",
@@ -131,4 +142,45 @@ func GetTypeData(typeString string) (*TypeMeta, error) {
 	}
 
 	return nil, fmt.Errorf("datasource type cannot be empty")
+}
+
+func ExtractPluginMetadata(tarPath string) (*db.Payload, error) {
+	f, err := os.Open(tarPath)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	var fileReader io.Reader = f
+	if strings.HasSuffix(tarPath, ".gz") {
+		if fileReader, err = gzip.NewReader(f); err != nil {
+			return nil, err
+		}
+	}
+
+	tarReader := tar.NewReader(fileReader)
+	var metadata db.Payload
+
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		if strings.HasSuffix(header.Name, "plugin.json") {
+			data, err := io.ReadAll(tarReader)
+			if err != nil {
+				return nil, err
+			}
+			if err := json.Unmarshal(data, &metadata); err != nil {
+				return nil, err
+			}
+			return &metadata, nil
+		}
+	}
+
+	return nil, errors.New("plugin.json not found in archive")
 }
