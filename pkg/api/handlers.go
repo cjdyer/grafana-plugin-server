@@ -11,12 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetRepoJSON(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"plugins": []string{},
-	})
-}
-
 func ProxyGrafanaAPI(c *gin.Context) {
 	resp, err := http.Get("https://grafana.com/api/plugins")
 	if err != nil {

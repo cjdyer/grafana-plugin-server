@@ -1,21 +1,32 @@
 package api
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(r *gin.Engine) {
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
+	api := r.Group("/api")
+	{
+		api.GET("/plugins", GetPlugins)
+		api.POST("/plugins", UploadPlugin)
+		api.GET("/plugins/:slug", GetPluginBySlug)
+		api.GET("/plugins/:slug/versions", GetVersions)
+		api.GET("/plugins/:slug/versions/:ver", GetVersion)
+		api.GET("/plugins/:slug/versions/:ver/download", DownloadVersion)
+	}
+
+	r.NoRoute(func(c *gin.Context) {
+		reqPath := c.Request.URL.Path
+		fullPath := filepath.Join("dist", reqPath)
+
+		if fi, err := os.Stat(fullPath); err == nil && !fi.IsDir() {
+			c.File(fullPath)
+			return
+		}
+
+		c.File("dist/index.html")
 	})
-
-	r.GET("/repo.json", GetRepoJSON)
-
-	// Plugin APIs
-	r.GET("/api/plugins", GetPlugins)
-	r.POST("/api/plugins", UploadPlugin)
-	r.GET("/api/plugins/:slug", GetPluginBySlug)
-	r.GET("/api/plugins/:slug/versions", GetVersions)
-	r.GET("/api/plugins/:slug/versions/:ver", GetVersion)
-	r.GET("/api/plugins/:slug/versions/:ver/download", DownloadVersion)
 }

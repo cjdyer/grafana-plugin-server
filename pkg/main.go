@@ -16,8 +16,9 @@ func main() {
 	r := gin.Default()
 	api.RegisterRoutes(r)
 
-	log.Println("Server starting on :8080")
-	if err := r.Run(":8080"); err != nil {
+	port := ":3838"
+	log.Printf("Server starting on %s\n", port)
+	if err := r.Run(port); err != nil {
 		log.Fatal(err)
 	}
 }

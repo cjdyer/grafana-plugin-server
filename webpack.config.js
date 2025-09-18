@@ -5,8 +5,9 @@ module.exports = {
     entry: "./src/index.tsx",
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "bundle.js",
-        publicPath: "/", // important for SPA routing
+        filename: "[name].[contenthash].js",
+        publicPath: "/",
+        clean: true,
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"],
@@ -23,17 +24,9 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, "src/public", "index.html"),
+            filename: "index.html",
         }),
     ],
-    devServer: {
-        static: path.join(__dirname, "dist"),
-        port: 3000,
-        proxy: [
-            {
-                context: ["/repo.json", "/api/plugins"],
-                target: "http://localhost:8080",
-            },
-        ],
-        hot: true,
-    },
+    devtool: "source-map",
+    mode: "production",
 };
