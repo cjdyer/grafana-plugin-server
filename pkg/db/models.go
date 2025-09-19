@@ -46,5 +46,9 @@ type Payload struct {
 		} `json:"author"`
 		Keywords []string `json:"keywords"`
 		Version  string   `json:"version"`
+		Logos    struct {
+			Small string `json:"small"`
+			Large string `json:"large"`
+		} `json:"logos"`
 	} `json:"info"`
 }

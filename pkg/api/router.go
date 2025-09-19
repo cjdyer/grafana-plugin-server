@@ -15,6 +15,7 @@ func RegisterRoutes(r *gin.Engine) {
 		api.GET("/plugins/:slug", GetPluginBySlug)
 		api.GET("/plugins/:slug/versions", GetVersions)
 		api.GET("/plugins/:slug/versions/:ver", GetVersion)
+		api.GET("/plugins/:slug/versions/:ver/logos/:variant", GetLogo)
 		api.GET("/plugins/:slug/versions/:ver/download", DownloadVersion)
 	}
 

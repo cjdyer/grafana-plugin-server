@@ -7,8 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -95,7 +97,14 @@ func UploadPlugin(c *gin.Context) {
 		return
 	}
 
-	os.Rename(tempPath, "./static/plugins/"+file.Filename)
+	pluginDir := "./static/plugins/" + metadata.ID
+	if err := os.MkdirAll(pluginDir, 0755); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create plugin dir"})
+		return
+	}
+
+	SaveLogos(tempPath, metadata, pluginDir)
+	os.Rename(tempPath, pluginDir+"/dist.tar")
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Plugin uploaded successfully",
@@ -183,4 +192,71 @@ func ExtractPluginMetadata(tarPath string) (*db.Payload, error) {
 	}
 
 	return nil, errors.New("plugin.json not found in archive")
+}
+
+func SaveLogos(tarPath string, metadata *db.Payload, destDir string) {
+	f, err := os.Open(tarPath)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer f.Close()
+
+	var fileReader io.Reader = f
+	if strings.HasSuffix(tarPath, ".gz") {
+		if fileReader, err = gzip.NewReader(f); err != nil {
+			log.Println(err)
+			return
+		}
+	}
+
+	tarReader := tar.NewReader(fileReader)
+
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		if strings.HasSuffix(header.Name, metadata.Info.Logos.Small) {
+			if data, err := io.ReadAll(tarReader); err == nil {
+				path := filepath.Join(destDir, "logo-small.svg")
+				if err := os.WriteFile(path, data, 0644); err != nil {
+					log.Println("Failed to save small logo:", err)
+				}
+			}
+		}
+
+		if strings.HasSuffix(header.Name, metadata.Info.Logos.Large) {
+			if data, err := io.ReadAll(tarReader); err == nil {
+				path := filepath.Join(destDir, "logo-large.svg")
+				if err := os.WriteFile(path, data, 0644); err != nil {
+					log.Println("Failed to save large logo:", err)
+				}
+			}
+		}
+	}
+}
+
+func GetLogo(c *gin.Context) {
+	slug := c.Param("slug")
+	variant := c.Param("variant")
+
+	if variant != "small" && variant != "large" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "variant must be 'small' or 'large'"})
+		return
+	}
+
+	logoPath := fmt.Sprintf("./static/plugins/%s/logo-%s.svg", slug, variant)
+
+	if _, err := os.Stat(logoPath); os.IsNotExist(err) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "logo not found"})
+		return
+	}
+
+	c.File(logoPath)
 }
