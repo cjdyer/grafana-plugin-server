@@ -11,5 +11,6 @@ CREATE TABLE IF NOT EXISTS plugins (
     org_url TEXT NOT NULL,
     keywords TEXT NOT NULL,
     version TEXT NOT NULL,
-    updated_at TEXT NOT NULL
+    updated_at TEXT NOT NULL,
+    readme TEXT NOT NULL
 );

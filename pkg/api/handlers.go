@@ -55,6 +55,11 @@ func UploadPlugin(c *gin.Context) {
 		return
 	}
 
+	readme, err := ExtractPluginReadme(tempPath)
+	if err != nil {
+		log.Println("Plugin Readme invalid", err)
+	}
+
 	typeCode, err := GetTypeData(metadata.Type)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid plugin type"})
@@ -75,6 +80,7 @@ func UploadPlugin(c *gin.Context) {
 		Keywords:    metadata.Info.Keywords,
 		Version:     metadata.Info.Version,
 		UpdatedAt:   t.Format(time.RFC3339),
+		Readme:      readme,
 		FilePath:    "/plugins/" + file.Filename,
 	}
 
@@ -108,7 +114,14 @@ func UploadPlugin(c *gin.Context) {
 
 func GetPluginBySlug(c *gin.Context) {
 	slug := c.Param("slug")
-	c.JSON(200, gin.H{"slug": slug})
+	plugin, err := plugins.GetPluginBySlug(slug)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, plugin)
 }
 
 func GetVersions(c *gin.Context) {
@@ -186,6 +199,43 @@ func ExtractPluginMetadata(tarPath string) (*db.Payload, error) {
 	}
 
 	return nil, errors.New("plugin.json not found in archive")
+}
+
+func ExtractPluginReadme(tarPath string) (string, error) {
+	f, err := os.Open(tarPath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	var fileReader io.Reader = f
+	if strings.HasSuffix(tarPath, ".gz") {
+		if fileReader, err = gzip.NewReader(f); err != nil {
+			return "", err
+		}
+	}
+
+	tarReader := tar.NewReader(fileReader)
+
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return "", err
+		}
+
+		if strings.Contains(strings.ToLower(header.Name), "readme") {
+			data, err := io.ReadAll(tarReader)
+			if err != nil {
+				return "", err
+			}
+			return string(data[:]), nil
+		}
+	}
+
+	return "", errors.New("plugin.json not found in archive")
 }
 
 func SaveLogos(tarPath string, metadata *db.Payload, destDir string) {

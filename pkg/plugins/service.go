@@ -17,8 +17,8 @@ func AddPlugin(p db.Plugin) error {
 
 	_, err = tx.Exec(`
 		INSERT INTO plugins
-			(slug, type_id, type_name, type_code, name, url, description, org_name, org_url, keywords, version, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			(slug, type_id, type_name, type_code, name, url, description, org_name, org_url, keywords, version, updated_at, readme)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		p.Slug,
 		p.TypeId,
 		p.TypeName,
@@ -31,6 +31,7 @@ func AddPlugin(p db.Plugin) error {
 		string(keywordsJSON),
 		p.Version,
 		p.UpdatedAt,
+		p.Readme,
 	)
 	if err != nil {
 		tx.Rollback()
@@ -98,6 +99,7 @@ func UpdatePlugin(p db.Plugin) error {
 			keywords = ?,
 			version = ?,
 			updated_at = ?
+			readme = ?
 		WHERE slug = ?
 	`,
 		p.TypeId,
@@ -126,7 +128,7 @@ func GetPluginBySlug(slug string) (*db.Plugin, error) {
 
 	err := db.DB.Get(&plugin, `
 		SELECT id, slug, type_id, type_name, type_code, name, url, description, 
-		       org_name, org_url, keywords, version, updated_at
+		       org_name, org_url, keywords, version, updated_at, readme
 		FROM plugins
 		WHERE slug = ?
 	`, slug)

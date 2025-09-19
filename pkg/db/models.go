@@ -30,6 +30,7 @@ type Plugin struct {
 	KeywordsJSON string   `db:"keywords" json:"-"`
 	Version      string   `db:"version" json:"version"`
 	UpdatedAt    string   `db:"updated_at" json:"updatedAt"`
+	Readme       string   `db:"readme" json:"readme"`
 	Links        []Link   `db:"-" json:"links"`
 	FilePath     string   `db:"file_path" json:"filePath"`
 }
