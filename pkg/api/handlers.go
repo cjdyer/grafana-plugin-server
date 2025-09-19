@@ -19,20 +19,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ProxyGrafanaAPI(c *gin.Context) {
-	resp, err := http.Get("https://grafana.com/api/plugins")
-	if err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to reach Grafana API"})
-		return
-	}
-	defer resp.Body.Close()
-
-	c.Status(resp.StatusCode)
-	c.Header("Content-Type", resp.Header.Get("Content-Type"))
-	body, _ := io.ReadAll(resp.Body)
-	c.Writer.Write(body)
-}
-
 func GetPlugins(c *gin.Context) {
 	plugins, err := plugins.ListPlugins()
 	if err != nil {
