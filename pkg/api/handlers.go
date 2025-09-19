@@ -92,9 +92,17 @@ func UploadPlugin(c *gin.Context) {
 		FilePath:    "/plugins/" + file.Filename,
 	}
 
-	if err := plugins.AddPlugin(p); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+	existing, err := plugins.GetPluginBySlug(metadata.ID)
+	if err == nil && existing != nil {
+		if err := plugins.UpdatePlugin(p); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	} else {
+		if err := plugins.AddPlugin(p); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
 	pluginDir := "./static/plugins/" + metadata.ID
