@@ -32,9 +32,6 @@ const getStyles = () => ({
         margin: 16,
         border: "1px solid #e0e0e0",
     }),
-    avatar: css({
-        backgroundColor: "#1976d2 !important",
-    }),
     chip: css({
         marginRight: 4,
         marginBottom: 4,
@@ -80,7 +77,10 @@ export const RemotePluginCard: React.FC<RemotePluginCardProps> = ({
         <Card className={styles.card} variant="outlined">
             <CardHeader
                 avatar={
-                    <Avatar className={styles.avatar}>
+                    <Avatar
+                        src={`/api/plugins/${plugin.slug}/versions/${plugin.version}/logos/small`}
+                        alt={`${name} logo`}
+                    >
                         {name[0].toUpperCase()}
                     </Avatar>
                 }
