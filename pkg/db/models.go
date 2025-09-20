@@ -33,6 +33,7 @@ type Plugin struct {
 	Readme       string   `db:"readme" json:"readme"`
 	Links        []Link   `db:"-" json:"links"`
 	FilePath     string   `db:"file_path" json:"filePath"`
+	IsCompatible bool     `db:"-" json:"isCompatible"`
 }
 
 type Payload struct {

@@ -126,7 +126,19 @@ func GetPluginBySlug(c *gin.Context) {
 
 func GetVersions(c *gin.Context) {
 	slug := c.Param("slug")
-	c.JSON(200, gin.H{"slug": slug, "versions": []string{}})
+
+	plugin, err := plugins.GetPluginBySlug(slug)
+	plugin.IsCompatible = true
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	pluginItems := make([]*db.Plugin, 1)
+	pluginItems[0] = plugin
+
+	c.JSON(200, gin.H{"items": pluginItems})
 }
 
 func GetVersion(c *gin.Context) {
