@@ -54,3 +54,9 @@ type Payload struct {
 		} `json:"logos"`
 	} `json:"info"`
 }
+
+type VersionCheckItem struct {
+	Slug              string `json:"slug"`
+	Version           string `json:"version"`
+	GrafanaDependency string `json:"grafanaDependency"`
+}

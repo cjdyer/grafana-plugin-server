@@ -17,6 +17,8 @@ func RegisterRoutes(r *gin.Engine) {
 		api.GET("/plugins/:slug/versions/:ver", GetVersion)
 		api.GET("/plugins/:slug/versions/:ver/logos/:variant", GetLogo)
 		api.GET("/plugins/:slug/versions/:ver/download", DownloadVersion)
+
+		api.GET("/plugins/versioncheck", VersionCheck)
 	}
 
 	r.NoRoute(func(c *gin.Context) {

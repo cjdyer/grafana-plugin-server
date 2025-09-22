@@ -329,3 +329,28 @@ func GetLogo(c *gin.Context) {
 
 	c.File(logoPath)
 }
+
+func VersionCheck(c *gin.Context) {
+	// Unused
+	// grafanaVersion := c.Query("grafanaVersion")
+	slugsQuery := c.Query("slugIn")
+	slugs := strings.Split(slugsQuery, ",")
+	versions := make([]db.VersionCheckItem, 0)
+
+	for _, slug := range slugs {
+		plugin, err := plugins.GetPluginBySlug(slug)
+
+		if err != nil {
+			// Plugin is broken, just don't add it
+			continue
+		}
+
+		versions = append(versions, db.VersionCheckItem{
+			Slug:              plugin.Slug,
+			Version:           plugin.Version,
+			GrafanaDependency: "",
+		})
+	}
+
+	c.JSON(http.StatusOK, versions)
+}
