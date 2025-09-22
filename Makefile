@@ -26,3 +26,7 @@ build-docker:
 run-docker:
 	@echo ">>> Running Docker container..."
 	docker compose up --build
+
+deps:
+	@echo ">>> Installing dependencies..."
+	npm install
