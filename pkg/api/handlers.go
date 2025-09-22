@@ -104,7 +104,11 @@ func UploadPlugin(c *gin.Context) {
 	}
 
 	SaveLogos(tempPath, metadata, pluginDir)
-	os.Rename(tempPath, pluginDir+"/dist.tar")
+
+	tarDir := pluginDir + "/dist.tar"
+	zipDir := pluginDir + "/dist.zip"
+	os.Rename(tempPath, tarDir)
+	TarToZip(tarDir, zipDir)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Plugin uploaded successfully",
@@ -149,8 +153,17 @@ func GetVersion(c *gin.Context) {
 
 func DownloadVersion(c *gin.Context) {
 	slug := c.Param("slug")
-	ver := c.Param("ver")
-	c.JSON(200, gin.H{"message": "Download not implemented", "slug": slug, "version": ver})
+	// Unused
+	// version := c.Param("ver")
+
+	distPath := fmt.Sprintf("./static/plugins/%s/dist.zip", slug)
+
+	if _, err := os.Stat(distPath); os.IsNotExist(err) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "plugin not found"})
+		return
+	}
+
+	c.File(distPath)
 }
 
 type TypeMeta struct {
