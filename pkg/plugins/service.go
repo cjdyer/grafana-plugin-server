@@ -98,7 +98,7 @@ func UpdatePlugin(p db.Plugin) error {
 			org_url = ?,
 			keywords = ?,
 			version = ?,
-			updated_at = ?
+			updated_at = ?,
 			readme = ?
 		WHERE slug = ?
 	`,
@@ -113,6 +113,7 @@ func UpdatePlugin(p db.Plugin) error {
 		string(keywordsJSON),
 		p.Version,
 		p.UpdatedAt,
+		p.Readme,
 		p.Slug,
 	)
 	if err != nil {
